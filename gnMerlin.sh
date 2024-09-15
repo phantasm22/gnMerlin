@@ -100,7 +100,7 @@ EOF
 
     chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
     echo ""
-    echo "Guest network script written and made executable."
+    echo "gnMerlin script written and made executable."
 }
 
 # Function to add the script to /jffs/scripts/services-start
