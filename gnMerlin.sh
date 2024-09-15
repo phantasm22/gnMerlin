@@ -10,6 +10,7 @@ CONFIGURED_INTERFACES=""
 SCRIPT_DIR="/jffs/scripts"
 SCRIPT_NAME="gnMerlin.sh"
 SERVICE_START_SCRIPT="/jffs/scripts/services-start"
+CONFIGURATION_STATUS=""
 
 # Function to display gnMerlin ASCII art with dynamic version
 display_ascii_art() {
@@ -32,12 +33,12 @@ check_configured_interfaces() {
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
         CONFIGURED_INTERFACES=$(grep -Eo "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | sort -u | tr '\n' ',' | sed 's/,$//')
         if [ -n "$CONFIGURED_INTERFACES" ]; then
-            echo -e "gnMerlin status: \033[34mInstalled: $CONFIGURED_INTERFACES\033[0m"
+            CONFIGURATION_STATUS="\033[34m[Installed: $CONFIGURED_INTERFACES]\033[0m"
         else
-            echo -e "gnMerlin status: \033[34mInstalled\033[0m"
+            CONFIGURATION_STATUS="\033[34m[Installed]\033[0m"
         fi
     else
-        echo -e "gnMerlin status: \033[31mUninstalled\033[0m"
+        CONFIGURATION_STATUS="\033[31m[Uninstalled]\033[0m"
     fi
 }
 
@@ -249,7 +250,8 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo ""
-        echo -e "   \033[0mi. Install or Update Guest Network Isolation"
+        echo -e "   i. Install or Update Guest Network Isolation"
+        echo -e "      $CONFIGURATION_STATUS"
         echo ""
         echo -e "   u. Update gnMerlin script version"
         echo -e "      $UPDATE_STATUS"
