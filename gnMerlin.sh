@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.1"
+SCRIPT_VERSION="0.1.2"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -30,7 +30,7 @@ display_ascii_art() {
 # Function to check already configured interfaces
 check_configured_interfaces() {
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
-        CONFIGURED_INTERFACES=$(grep -Eo "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | sort -u | paste -sd, -)
+        CONFIGURED_INTERFACES=$(grep -Eo "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | sort -u | tr '\n' ',' | sed 's/,$//')
         if [ -n "$CONFIGURED_INTERFACES" ]; then
             echo -e "gnMerlin status: \033[34mInstalled: $CONFIGURED_INTERFACES\033[0m"
         else
@@ -106,7 +106,7 @@ EOF
 # Function to add the script to /jffs/scripts/services-start
 add_to_services_start() {
     if ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
-        echo "$SCRIPT_DIR/$SCRIPT_NAME #Added by gnMerlin" >> "$SERVICE_START_SCRIPT"
+        echo "$SCRIPT_DIR/$SCRIPT_NAME & #Added by gnMerlin" >> "$SERVICE_START_SCRIPT"
         echo "Added gnMerlin script to $SERVICE_START_SCRIPT."
     else
         echo "gnMerlin script already added to $SERVICE_START_SCRIPT."
