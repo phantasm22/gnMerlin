@@ -250,15 +250,15 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo -e "\033[1;32m"
-        echo -e "   i. Install or Update Guest Network Isolation\033[0m"
+        echo -e "   i. \033[0mInstall or Update Guest Network Isolation"
         echo -e "      $CONFIGURATION_STATUS"
         echo -e "\033[1;32m"
-        echo -e "   u. Update gnMerlin script version\033[0m"
+        echo -e "   u. \033[0mUpdate gnMerlin script version"
         echo -e "      $UPDATE_STATUS"
         echo -e "\033[1;32m"
-        echo -e "   z. Uninstall Guest Network Isolation\033[0m"
+        echo -e "   z. \033[0mUninstall Guest Network Isolation\033[0m"
         echo -e "\033[1;32m"
-        echo -e "   e. Exit\033[0m"
+        echo -e "   e. \033[0mExit"
         echo -e "\033[1;32m"
         echo -ne "Enter your choice: \033[0m"
         read choice
