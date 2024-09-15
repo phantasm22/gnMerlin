@@ -177,11 +177,11 @@ update_script() {
         fi
 
         # Download the new script and replace the current version
-        curl -o "$SCRIPT_DIR/$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh"
+        curl -o "./$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh"
         if [ $? -eq 0 ]; then
             echo "Update successful. Restarting the script."
-            chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
-            exec "$SCRIPT_DIR/$SCRIPT_NAME"
+            chmod +x "./$SCRIPT_NAME"
+            exec "./$SCRIPT_NAME"
         else
             echo "Error updating the script."
             echo ""
