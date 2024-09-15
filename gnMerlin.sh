@@ -21,7 +21,7 @@ display_ascii_art() {
     echo "    | (_| | | | | |  | |  __/ |  | | | | | |"
     echo "     \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
     echo -e "      __/ |"
-    echo -e "     |___/               \033[32mv$SCRIPT_VERSION\033[0m"  # Version number in dark green
+    echo -e "     |___/                          \033[32mv$SCRIPT_VERSION\033[0m"  # Version number in dark green
     echo -e "\033[38;5;214m================= By Phantasm22 =================\033[0m"
     echo -e "\033[0m"  # Reset color
     echo ""
@@ -221,10 +221,10 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo ""
-        echo -e "\033[34mi\033[0m - Install or Update Guest Network\033[0m"
-        echo -e "\033[34mu\033[0m - Uninstall Guest Network\033[0m"
-        echo -e "\033[34mv\033[0m - Check for Script Updates\033[0m"
-        echo -e "\033[34me\033[0m - Exit\033[0m"
+        echo -e "   \033[34mi\033[0m - Install or Update Guest Network\033[0m"
+        echo -e "   \033[34mu\033[0m - Uninstall Guest Network\033[0m"
+        echo -e "   \033[34mv\033[0m - Check for Script Updates\033[0m"
+        echo -e "   \033[34me\033[0m - Exit\033[0m"
         echo ""
         echo -n "Enter your choice: "
         read choice
@@ -240,3 +240,4 @@ main_menu() {
 }
 
 # Start the script with the main menu
+main_menu
