@@ -219,9 +219,9 @@ prompt_for_forced_update() {
 install_update() {
     echo ""
     echo -e "\033[1;32mDownloading the latest version...\033[0m"
-    echo -e "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL/$SCRIPT_NAME"
-    curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL/$SCRIPT_NAME"
+    curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL/$SCRIPT_NAME" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
+        echo ""
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
         chmod +x "$PWD/$SCRIPT_NAME"
         sleep 2
