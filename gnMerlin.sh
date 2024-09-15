@@ -239,9 +239,9 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo ""
-        echo -e "   \033[0mi - Install or Update Guest Network"
-        echo -e "   u - Uninstall Guest Network"
-        echo -e "   v - Check for Script Updates"
+        echo -e "   \033[0mi - Install or Update Guest Network Isolation"
+        echo -e "   u - Uninstall Guest Network Isolation"
+        echo -e "   v - Force Update gnMerlin script"
         echo -e "   e - Exit"
         echo ""
         echo -n "Enter your choice: "
