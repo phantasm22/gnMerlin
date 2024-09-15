@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.6"
+SCRIPT_VERSION="0.1.7"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -193,39 +193,73 @@ check_for_update() {
     fi
 }
 
-# Function to update the script version
-update_script() {
+# Function to check for a new version
+check_for_update() {
+    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
+    if [ $? -ne 0 ]; then
+        UPDATE_STATUS="\033[1;31m[Update check failed]\033[0m"
+        return 1  # Update check failed
+    fi
+
     if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
+        UPDATE_STATUS="\033[1;32m[New version \033[1;34mv$REMOTE_VERSION\033[1;32m available]\033[0m"
+        return 0  # New version available
+    else
+        UPDATE_STATUS="\033[1;32m[No update available]\033[0m"
+        return 1  # No update needed
+    fi
+}
+
+# Function to prompt for a forced update
+prompt_for_forced_update() {
+    echo -ne "\033[1;32mWould you like to force an update? (y/n): \033[0m"
+    read force_update_confirm
+    if [ "$force_update_confirm" != "y" ]; then
+        echo "Update cancelled."
+        return 1
+    fi
+    return 0
+}
+
+# Function to download and install the new script
+install_update() {
+    echo -e "\033[1;32mDownloading the latest version...\033[0m"
+    curl -o "$SCRIPT_DIR/$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/$SCRIPT_NAME"
+    if [ $? -eq 0 ]; then
+        echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
+        chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
+        exec "$SCRIPT_DIR/$SCRIPT_NAME"
+    else
+        echo -e "\033[1;31mError updating the script.\033[0m"
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
+        return 1
+    fi
+}
+
+# Main function to handle the update process
+update_script() {
+    check_for_update
+    if [ $? -eq 0 ]; then  # If a new version is available
         echo -e "\033[1;32mNew version \033[1;34mv$REMOTE_VERSION\033[1;32m available.\033[0m"
         echo -ne "\033[1;32mWould you like to update? (y/n): \033[0m"
         read confirm
         if [ "$confirm" != "y" ]; then
             echo "Update cancelled."
-            return
+            return 1
         fi
-
-        # Download the new script and replace the current version
-        curl -o "./$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh"
+        install_update
+    else  # No new version, prompt for a forced update
+        prompt_for_forced_update
         if [ $? -eq 0 ]; then
-            echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
-            chmod +x "./$SCRIPT_NAME"
-            exec "./$SCRIPT_NAME"
-        else
-            echo -e "\033[1;31mError updating the script.\033[0m"
-            echo ""
-            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-            read
-            return
+            install_update
         fi
-    else
-        echo -e "\033[1;33mNotice: You already have the latest version.\033[0m"
     fi
-
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
     read
 }
-
 # Function to install or update guest network
 install_update_guest_network() {
     get_available_interfaces
