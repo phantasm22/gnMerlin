@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.5"
+SCRIPT_VERSION="0.1.6"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -22,7 +22,7 @@ display_ascii_art() {
     echo "    | (_| | | | | |  | |  __/ |  | | | | | |"
     echo "     \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
     echo -e "      __/ |"
-    echo -e "     |___/                            \033[32mv$SCRIPT_VERSION\033[0m"  # Version number in dark green
+    echo -e "     |___/                            \033[1;32mv$SCRIPT_VERSION\033[0m"  # Version number in dark green
     echo -e "\033[38;5;214m================= By Phantasm22 =================\033[0m"
     echo -e "\033[0m"  # Reset color
     echo ""
@@ -33,12 +33,12 @@ check_configured_interfaces() {
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
         CONFIGURED_INTERFACES=$(grep -Eo "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | sort -u | tr '\n' ',' | sed 's/,$//')
         if [ -n "$CONFIGURED_INTERFACES" ]; then
-            CONFIGURATION_STATUS="\033[34m[Installed: $CONFIGURED_INTERFACES]\033[0m"
+            CONFIGURATION_STATUS="\033[1;34m[Installed: $CONFIGURED_INTERFACES]\033[0m"
         else
-            CONFIGURATION_STATUS="\033[34m[Installed]\033[0m"
+            CONFIGURATION_STATUS="\033[1;34m[Installed]\033[0m"
         fi
     else
-        CONFIGURATION_STATUS="\033[31m[Uninstalled]\033[0m"
+        CONFIGURATION_STATUS="\033[1;33m[Uninstalled]\033[0m"
     fi
 }
 
@@ -47,19 +47,19 @@ get_available_interfaces() {
     INTERFACES=$(brctl show | grep -o 'wl[0-9]\.[0-9]' | sort -u)
     
     if [ -z "$INTERFACES" ]; then
-        echo "Error: No wireless interfaces (matching 'wl<digit>.<digit>') found. Exiting."
+        echo -e "\033[1;31mError: No wireless interfaces (matching 'wl<digit>.<digit>') found. Exiting.\033[0m"
         exit 1
     fi
 }
 
 # Function to ask the user to select interfaces
 select_interfaces() {
-    echo "Available interfaces for guest network:"
+    echo -e "\033[1;32mAvailable interfaces for guest network:\033[0m"
     echo "$INTERFACES"
     echo ""
 
     for interface in $INTERFACES; do
-        echo -n "Do you want to apply guest network isolation on $interface? (y/n): "
+        echo -ne "\033[1;32mDo you want to apply guest network isolation on $interface? (y/n): \033[0m"
         read answer
         if [ "$answer" = "y" ]; then
             SELECTED_INTERFACES="$SELECTED_INTERFACES $interface"
@@ -67,12 +67,12 @@ select_interfaces() {
     done
 
     if [ -z "$SELECTED_INTERFACES" ]; then
-        echo "No interfaces selected. Returning to the main menu."
+        echo -e "\033[1;33mNo interfaces selected. Returning to the main menu.\033[0m"
         return
     fi
 
-    echo "Selected interfaces: $SELECTED_INTERFACES"
-    echo -n "Is this correct? (y/n): "
+    echo -e "\033[1;32mSelected interfaces: $SELECTED_INTERFACES\033[0m"
+    echo -ne "\033[1;32mIs this correct? (y/n): \033[0m"
     read confirm
     if [ "$confirm" != "y" ]; then
         echo "Returning to the main menu."
@@ -134,14 +134,14 @@ start_gnMerlin() {
 # Function to handle existing script removal
 uninstall_guest_network() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ] && ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
-        echo "gnMerlin is not currently installed."
+        echo -e "\033[1;31mgnMerlin is not currently installed.\033[0m"
         return
     fi
     
-    echo -n "Are you sure you want to uninstall gnMerlin? (y/n): "
+    echo -ne "\033[1;32mAre you sure you want to uninstall gnMerlin? (y/n): \033[0m"
     read confirm
     if [ "$confirm" != "y" ]; then
-        echo "Uninstall cancelled."
+        echo -e "\033[1;32mUninstall cancelled.\033[0m"
         return
     fi
 
@@ -150,9 +150,9 @@ uninstall_guest_network() {
         if [ $? -eq 0 ]; then
             echo "Removed $SCRIPT_NAME."
         else
-            echo "Error removing $SCRIPT_NAME."
+            echo -e "\033[1;31mError removing $SCRIPT_NAME.\033[0m"
             echo ""
-            echo "Press enter to return to the menu"
+            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
             read
             return
         fi
@@ -163,17 +163,17 @@ uninstall_guest_network() {
         if [ $? -eq 0 ]; then
             echo "Removed gnMerlin entry from $SERVICE_START_SCRIPT."
         else
-            echo "Error removing gnMerlin entry from $SERVICE_START_SCRIPT."
+            echo -e "\033[1;31mError removing gnMerlin entry from $SERVICE_START_SCRIPT.\033[0m"
             echo ""
-            echo "Press enter to return to the menu"
+            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
             read
             return
         fi
     fi
 
-    echo "gnMerlin has been uninstalled successfully. Please reboot to take effect."
+    echo -e "\033[1;32mgnMerlin has been uninstalled successfully. Please reboot to take effect.\033[0m"
     echo ""
-    echo "Press enter to continue"
+    echo -e "\033[1;32mPress enter to continue\033[0m"
     read
 }
 
@@ -181,22 +181,22 @@ uninstall_guest_network() {
 check_for_update() {
     REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
     if [ $? -ne 0 ]; then
-        UPDATE_STATUS="[Update check failed]"
+        UPDATE_STATUS="\033[1;31m[Update check failed]\033[0m"
         return
     fi
 
     if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
-        UPDATE_STATUS="[New version \033[34mv$REMOTE_VERSION\033[0m available]"
+        UPDATE_STATUS="\033[1;32m[New version \033[34mv$REMOTE_VERSION\033[1;32m available]\033[0m"
     else
-        UPDATE_STATUS="[No update available]"
+        UPDATE_STATUS="\033[1;32m[No update available]\033[0m"
     fi
 }
 
 # Function to update the script version
 update_script() {
     if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
-        echo -e "New version \033[34mv$REMOTE_VERSION\033[0m available."
-        echo -n "Would you like to update? (y/n): "
+        echo -e "\033[1;32mNew version \033[1;34mv$REMOTE_VERSION\033[1;32m available.\033[0m"
+        echo -ne "\033[1;32mWould you like to update? (y/n): \033[0m"
         read confirm
         if [ "$confirm" != "y" ]; then
             echo "Update cancelled."
@@ -206,22 +206,22 @@ update_script() {
         # Download the new script and replace the current version
         curl -o "./$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh"
         if [ $? -eq 0 ]; then
-            echo "Update successful. Restarting the script."
+            echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
             chmod +x "./$SCRIPT_NAME"
             exec "./$SCRIPT_NAME"
         else
-            echo "Error updating the script."
+            echo -e "\033[1;31mError updating the script.\033[0m"
             echo ""
-            echo "Press enter to return to the menu"
+            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
             read
             return
         fi
     else
-        echo "You already have the latest version."
+        echo -e "\033[1;33mNotice: You already have the latest version.\033[0m"
     fi
 
     echo ""
-    echo "Press enter to continue"
+    echo -e "\033[1;32mPress enter to continue\033[0m"
     read
 }
 
@@ -233,12 +233,12 @@ install_update_guest_network() {
         write_script
         add_to_services_start
         start_gnMerlin
-        echo "Installation/Update completed!"
+        echo -e "\033[1;32mInstallation/Update completed!\033[0m"
         check_configured_interfaces
     fi
 
     echo ""
-    echo "Press enter to continue"
+    echo -e "\033[1;32mPress enter to continue\033[0m"
     read
 }
 
@@ -249,18 +249,18 @@ main_menu() {
         clear
         display_ascii_art
         check_configured_interfaces
-        echo ""
-        echo -e "   i. Install or Update Guest Network Isolation"
+        echo -e "\033[1;32m"
+        echo -e "   i. Install or Update Guest Network Isolation\033[0m"
         echo -e "      $CONFIGURATION_STATUS"
-        echo ""
-        echo -e "   u. Update gnMerlin script version"
+        echo -e "\033[1;32m"
+        echo -e "   u. Update gnMerlin script version\033[0m"
         echo -e "      $UPDATE_STATUS"
-        echo ""
-        echo -e "   z. Uninstall Guest Network Isolation"
-        echo ""
-        echo -e "   e. Exit"
-        echo ""
-        echo -n "Enter your choice: "
+        echo -e "\033[1;32m"
+        echo -e "   z. Uninstall Guest Network Isolation\033[0m"
+        echo -e "\033[1;32m"
+        echo -e "   e. Exit\033[0m"
+        echo -e "\033[1;32m"
+        echo -ne "Enter your choice: \033[0m"
         read choice
 
         case "$choice" in
