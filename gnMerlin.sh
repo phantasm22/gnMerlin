@@ -33,9 +33,9 @@ check_configured_interfaces() {
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
         CONFIGURED_INTERFACES=$(grep -Eo "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | sort -u | tr '\n' ',' | sed 's/,$//')
         if [ -n "$CONFIGURED_INTERFACES" ]; then
-            CONFIGURATION_STATUS="\033[1;34m[Installed: $CONFIGURED_INTERFACES]\033[0m"
+            CONFIGURATION_STATUS="\033[1;32m[Installed: \033[1;34m$CONFIGURED_INTERFACES\033[1;32m]\033[0m"
         else
-            CONFIGURATION_STATUS="\033[1;34m[Installed]\033[0m"
+            CONFIGURATION_STATUS="\033[1;32m[Installed]\033[0m"
         fi
     else
         CONFIGURATION_STATUS="\033[1;33m[Uninstalled]\033[0m"
