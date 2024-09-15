@@ -173,6 +173,7 @@ uninstall_guest_network() {
         fi
     fi
 
+    echo ""
     echo -e "\033[1;32mgnMerlin has been uninstalled successfully. Please reboot to take effect.\033[0m"
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
