@@ -136,7 +136,11 @@ start_gnMerlin() {
 # Function to handle existing script removal
 uninstall_guest_network() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ] && ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
+        echo ""
         echo -e "\033[1;31mgnMerlin is not currently installed.\033[0m"
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
         return
     fi
     
