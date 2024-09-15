@@ -254,9 +254,6 @@ update_script() {
             install_update
         fi
     fi
-    echo ""
-    echo -e "\033[1;32mPress enter to continue\033[0m"
-    read
 }
 # Function to install or update guest network
 install_update_guest_network() {
