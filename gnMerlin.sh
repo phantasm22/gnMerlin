@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.3"
+SCRIPT_VERSION="0.1.4"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -92,12 +92,13 @@ EOF
         cat >> "$SCRIPT_DIR/$SCRIPT_NAME" <<EOF
 /usr/sbin/ebtables -I FORWARD -i $interface -j DROP
 /usr/sbin/ebtables -I FORWARD -o $interface -j DROP
+EOF
+    done
+    cat >> "$SCRIPT_DIR/$SCRIPT_NAME" <<EOF
 /usr/sbin/ebtables -I FORWARD -d Broadcast -j ACCEPT
 /usr/sbin/ebtables -I FORWARD -d \$MACADDRESS -j ACCEPT
 /usr/sbin/ebtables -I FORWARD -s \$MACADDRESS -j ACCEPT
 EOF
-    done
-
     chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
     echo ""
     echo "gnMerlin script written and made executable."
