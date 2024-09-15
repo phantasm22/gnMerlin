@@ -106,7 +106,7 @@ EOF
 # Function to add the script to /jffs/scripts/services-start
 add_to_services_start() {
     if ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
-        echo "$SCRIPT_DIR/$SCRIPT_NAME # Added by gnMerlin" >> "$SERVICE_START_SCRIPT"
+        echo "$SCRIPT_DIR/$SCRIPT_NAME #Added by gnMerlin" >> "$SERVICE_START_SCRIPT"
         echo "Added gnMerlin script to $SERVICE_START_SCRIPT."
     else
         echo "gnMerlin script already added to $SERVICE_START_SCRIPT."
