@@ -181,7 +181,6 @@ uninstall_guest_network() {
 check_for_update() {
     REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
     if [ $? -ne 0 ]; then
-        echo "Error fetching remote version. Exiting."
         UPDATE_STATUS="[Update check failed]"
         return
     fi
@@ -245,6 +244,7 @@ install_update_guest_network() {
 
 # Main menu function
 main_menu() {
+    check_for_update
     while true; do
         clear
         display_ascii_art
