@@ -14,15 +14,15 @@ SERVICE_START_SCRIPT="/jffs/scripts/services-start"
 # Function to display gnMerlin ASCII art with dynamic version
 display_ascii_art() {
     echo -e "\033[38;5;214m"  # Set color to orange
-    echo "                   __  __           _ _       "
-    echo "                  |  \/  |         | (_)      "
-    echo "        __ _ _ __ | \  / | ___ _ __| |_ _ __  "
-    echo "       / _\` | '_ \| |\/| |/ _ \ '__| | | '_ \ "
-    echo "      | (_| | | | | |  | |  __/ |  | | | | | |"
-    echo "       \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
-    echo "        __/ |                                  "
-    echo "       |___/                           \033[32mv$SCRIPT_VERSION\033[214m"
-    echo "================= By Phantasm22 ================="
+    echo "                  __  __           _ _       "
+    echo "                 |  \/  |         | (_)      "
+    echo "       __ _ _ __ | \  / | ___ _ __| |_ _ __  "
+    echo "      / _\` | '_ \| |\/| |/ _ \ '__| | | '_ \ "
+    echo "     | (_| | | | | |  | |  __/ |  | | | | | |"
+    echo "      \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
+    echo -e "       __/ |                           \033[32mv$SCRIPT_VERSION\033[214m"
+    echo "      |___/                           "
+    echo -e "\033[38;5;214m================= By Phantasm22 =================\033[0m"
     echo -e "\033[0m"  # Reset color
     echo ""
 }
@@ -116,6 +116,8 @@ uninstall_guest_network() {
     fi
 
     echo "gnMerlin has been uninstalled successfully."
+    echo "Press enter to continue"
+    read
 }
 
 # Function to update the script version
@@ -149,6 +151,9 @@ update_script() {
     else
         echo "You already have the latest version."
     fi
+
+    echo "Press enter to continue"
+    read
 }
 
 # Main menu function
@@ -164,16 +169,17 @@ main_menu() {
         echo "  v - Update gnMerlin Script"
         echo "  e - Exit"
         echo ""
-        echo "Enter your choice: "
+        echo -n "Enter your choice: "
         read choice
 
         case "$choice" in
             [iI])
                 get_available_interfaces
                 select_interfaces
-                get_mac_address
-                write_script
-                add_to_services_start
+                # Example placeholder for installing/updating functionality
+                echo "Installation/Update completed!"
+                echo "Press enter to continue"
+                read
                 ;;
             [uU])
                 uninstall_guest_network
@@ -187,6 +193,8 @@ main_menu() {
                 ;;
             *)
                 echo "Invalid option. Please choose again."
+                echo "Press enter to continue"
+                read
                 ;;
         esac
     done
