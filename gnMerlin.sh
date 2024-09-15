@@ -61,7 +61,7 @@ select_interfaces() {
     SELECTED_INTERFACES=""
 
     for interface in $INTERFACES; do
-        echo -ne "\033[1;32mDo you want to apply guest network isolation on $interface? (y/n): \033[0m"
+        echo -ne "\033[1;32mDo you want to apply guest network isolation on \033[1;34m$interface\033[1;32m? (y/n): \033[0m"
         read answer
         if [ "$answer" = "y" ]; then
             SELECTED_INTERFACES="$SELECTED_INTERFACES $interface"
