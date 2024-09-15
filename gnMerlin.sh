@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# Version 0.1 - Guest Network for Merlin Script Installer
+# Version of the script
+SCRIPT_VERSION="0.1.0"
+REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
 SELECTED_INTERFACES=""
@@ -9,18 +11,18 @@ SCRIPT_DIR="/jffs/scripts"
 SCRIPT_NAME="gnMerlin.sh"
 SERVICE_START_SCRIPT="/jffs/scripts/services-start"
 
-# Function to display gnMerlin ASCII art in orange with separation
+# Function to display gnMerlin ASCII art with dynamic version
 display_ascii_art() {
     echo -e "\033[38;5;214m"  # Set color to orange
-    echo "              __  __           _ _       "
-    echo "             |  \/  |         | (_)      "
-    echo "   __ _ _ __ | \  / | ___ _ __| |_ _ __  "
-    echo "  / _\` | '_ \| |\/| |/ _ \ '__| | | '_ \ "
-    echo " | (_| | | | | |  | |  __/ |  | | | | | |"
-    echo "  \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
-    echo "   __/ |                                 "
-    echo "  |___/                                  "
-    echo "========================================"
+    echo "                   __  __           _ _       "
+    echo "                  |  \/  |         | (_)      "
+    echo "        __ _ _ __ | \  / | ___ _ __| |_ _ __  "
+    echo "       / _\` | '_ \| |\/| |/ _ \ '__| | | '_ \ "
+    echo "      | (_| | | | | |  | |  __/ |  | | | | | |"
+    echo "       \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
+    echo "        __/ |                                  "
+    echo "       |___/                           \033[32mv$SCRIPT_VERSION\033[214m"
+    echo "================= By Phantasm22 ================="
     echo -e "\033[0m"  # Reset color
     echo ""
 }
@@ -28,21 +30,19 @@ display_ascii_art() {
 # Function to check already configured interfaces
 check_configured_interfaces() {
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
-        CONFIGURED_INTERFACES=$(grep -E "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | awk '{print $5}')
+        CONFIGURED_INTERFACES=$(grep -Eo "wl[0-1]\.[1-4]" "$SCRIPT_DIR/$SCRIPT_NAME" | sort -u | paste -sd, -)
         if [ -n "$CONFIGURED_INTERFACES" ]; then
-            echo "The following interfaces are already configured with guest network isolation:"
-            echo "$CONFIGURED_INTERFACES"
+            echo -e "gnMerlin status: \033[34mInstalled: $CONFIGURED_INTERFACES\033[0m"
         else
-            echo "No interfaces are currently configured with guest network isolation."
+            echo -e "gnMerlin status: \033[34mInstalled\033[0m"
         fi
     else
-        echo "No previous guest network isolation script found."
+        echo -e "gnMerlin status: \033[31mUninstalled\033[0m"
     fi
 }
 
 # Function to dynamically get all wireless interfaces matching 'wl<digit>.<digit>'
 get_available_interfaces() {
-    # Extract interfaces matching "wl<digit>.<digit>" from the output of brctl show
     INTERFACES=$(brctl show | grep -o 'wl[0-9]\.[0-9]' | sort -u)
     
     if [ -z "$INTERFACES" ]; then
@@ -54,10 +54,8 @@ get_available_interfaces() {
 # Function to ask the user to select interfaces
 select_interfaces() {
     echo "Available interfaces for guest network:"
-    if [ -z "$INTERFACES" ]; then
-        echo "No wireless interfaces found. Exiting."
-        exit 0
-    fi
+    echo "$INTERFACES"
+    echo ""
 
     for interface in $INTERFACES; do
         echo "Do you want to apply guest network isolation on $interface? (y/n)"
@@ -81,155 +79,118 @@ select_interfaces() {
     fi
 }
 
-# Function to ask if user wants to backup, overwrite, or quit
-handle_existing_script() {
-    OUTPUT_SCRIPT="$SCRIPT_DIR/$SCRIPT_NAME"
+# Function to handle existing script removal
+uninstall_guest_network() {
+    if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ] && ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
+        echo "gnMerlin is not currently installed."
+        return
+    fi
+    
+    echo "Are you sure you want to uninstall gnMerlin? (y/n)"
+    read confirm
+    if [ "$confirm" != "y" ]; then
+        echo "Uninstall cancelled."
+        return
+    fi
+
+    if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
+        rm "$SCRIPT_DIR/$SCRIPT_NAME"
+        if [ $? -eq 0 ]; then
+            echo "Removed $SCRIPT_NAME."
+        else
+            echo "Error removing $SCRIPT_NAME. Press enter to return to the menu."
+            read
+            return
+        fi
+    fi
+
+    if grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
+        sed -i "/$SCRIPT_NAME/d" "$SERVICE_START_SCRIPT"
+        if [ $? -eq 0 ]; then
+            echo "Removed gnMerlin entry from $SERVICE_START_SCRIPT."
+        else
+            echo "Error removing gnMerlin entry from $SERVICE_START_SCRIPT. Press enter to return to the menu."
+            read
+            return
+        fi
+    fi
+
+    echo "gnMerlin has been uninstalled successfully."
+}
+
+# Function to update the script version
+update_script() {
+    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
+    if [ $? -ne 0 ]; then
+        echo "Error fetching remote version. Exiting."
+        return
+    fi
+
+    if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
+        echo -e "New version \033[34mv$REMOTE_VERSION\033[0m available."
+        echo "Would you like to update? (y/n)"
+        read confirm
+        if [ "$confirm" != "y" ]; then
+            echo "Update cancelled."
+            return
+        fi
+
+        # Download the new script and replace the current version
+        curl -o "$SCRIPT_DIR/$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh"
+        if [ $? -eq 0 ]; then
+            echo "Update successful. Restarting the script."
+            chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
+            exec "$SCRIPT_DIR/$SCRIPT_NAME"
+        else
+            echo "Error updating the script. Press enter to return to the menu."
+            read
+            return
+        fi
+    else
+        echo "You already have the latest version."
+    fi
+}
+
+# Main menu function
+main_menu() {
     while true; do
-        echo "Script $SCRIPT_NAME already exists."
-        echo "Do you want to backup, overwrite, or quit? (b/o/q)"
+        clear
+        display_ascii_art
+        check_configured_interfaces
+        echo ""
+        echo "Menu Options:"
+        echo "  i - Install or Update Guest Network"
+        echo "  u - Uninstall Guest Network"
+        echo "  v - Update gnMerlin Script"
+        echo "  e - Exit"
+        echo ""
+        echo "Enter your choice: "
         read choice
+
         case "$choice" in
-            [bB])
-                mv "$OUTPUT_SCRIPT" "$OUTPUT_SCRIPT.bak"
-                echo "Backup created: $OUTPUT_SCRIPT.bak"
-                break
+            [iI])
+                get_available_interfaces
+                select_interfaces
+                get_mac_address
+                write_script
+                add_to_services_start
                 ;;
-            [oO])
-                echo "Overwriting existing script."
-                break
+            [uU])
+                uninstall_guest_network
                 ;;
-            [qQ])
+            [vV])
+                update_script
+                ;;
+            [eE])
                 echo "Exiting."
                 exit 0
                 ;;
             *)
-                echo "Invalid choice. Please choose 'b' for backup, 'o' for overwrite, or 'q' for quit."
+                echo "Invalid option. Please choose again."
                 ;;
         esac
     done
 }
 
-# Function to extract MAC address of the default gateway
-get_mac_address() {
-    IPADDRESS=$( /usr/sbin/ip route | awk '/^default/ {print $3}' )
-    if [ -n "$IPADDRESS" ]; then
-        echo "Default Gateway IP: $IPADDRESS"
-        MACADDRESS=$( /sbin/arp | grep "($IPADDRESS)" | awk '{print $4}' )
-        MAC_COUNT=$( /sbin/arp | grep "($IPADDRESS)" | wc -l )
-
-        if [ "$MAC_COUNT" -ne 1 ]; then
-            echo "Error: Multiple or no MAC addresses found for $IPADDRESS. Exiting."
-            exit 1
-        elif [ -n "$MACADDRESS" ]; then
-            echo "MAC Address: $MACADDRESS"
-        else
-            echo "Error: MAC Address not found. Exiting."
-            exit 1
-        fi
-    else
-        echo "Error: Default Gateway not found. Exiting."
-        exit 1
-    fi
-}
-
-# Function to write the script to /jffs/scripts
-write_script() {
-    OUTPUT_SCRIPT="$SCRIPT_DIR/$SCRIPT_NAME"
-    cat <<EOL >"$OUTPUT_SCRIPT"
-#!/bin/sh
-# Version 0.1 - Guest Network for Merlin
-
-# Extract the default gateway
-IPADDRESS=\`/usr/sbin/ip route | awk '/^default/ {print \$3}'\`
-
-if [ -n "\$IPADDRESS" ]; then
-    echo "Default Gateway IP: \$IPADDRESS"
-    MACADDRESS=\`/sbin/arp | grep "(\$IPADDRESS)" | awk '{print \$4}'\`
-    MAC_COUNT=\`/sbin/arp | grep "(\$IPADDRESS)" | wc -l\`
-
-    if [ "\$MAC_COUNT" -ne 1 ]; then
-        echo "Error: Multiple or no MAC addresses found for \$IPADDRESS. Exiting."
-        exit 1
-    elif [ -n "\$MACADDRESS" ]; then
-        echo "MAC Address: \$MACADDRESS"
-    else
-        echo "MAC Address not found. Exiting."
-        exit 1
-    fi
-else
-    echo "Default Gateway not found. Exiting."
-    exit 1
-fi
-
-# Guest Network Isolation commands using the extracted MAC address
-EOL
-
-    for interface in $SELECTED_INTERFACES; do
-        echo "Adding commands for interface: $interface"
-        echo "/usr/sbin/ebtables -I FORWARD -i $interface -j DROP" >>"$OUTPUT_SCRIPT"
-        echo "/usr/sbin/ebtables -I FORWARD -o $interface -j DROP" >>"$OUTPUT_SCRIPT"
-    done
-
-    cat <<EOL >>"$OUTPUT_SCRIPT"
-/usr/sbin/ebtables -I FORWARD -d Broadcast -j ACCEPT
-/usr/sbin/ebtables -I FORWARD -d "\$MACADDRESS" -j ACCEPT
-/usr/sbin/ebtables -I FORWARD -s "\$MACADDRESS" -j ACCEPT
-echo "Network isolation rules applied successfully."
-EOL
-
-    # Make the script executable
-    chmod +x "$OUTPUT_SCRIPT"
-    if [ $? -eq 0 ]; then
-        echo "Script written successfully and made executable."
-    else
-        echo "Error: Failed to make the script executable."
-        exit 1
-    fi
-}
-
-# Function to add the script to /jffs/scripts/services-start
-add_to_services_start() {
-    if ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
-        echo "Adding script to $SERVICE_START_SCRIPT"
-        echo "if [ -f \"$SCRIPT_DIR/$SCRIPT_NAME\" ]; then" >>"$SERVICE_START_SCRIPT"
-        echo "    sh \"$SCRIPT_DIR/$SCRIPT_NAME\"" >>"$SERVICE_START_SCRIPT"
-        echo "fi #Added by gnMerlin" >>"$SERVICE_START_SCRIPT"
-    else
-        echo "Script already exists in $SERVICE_START_SCRIPT"
-    fi
-}
-
-# Start of the installer script
-display_ascii_art
-echo "Welcome to the Guest Network for Merlin Installer (Version 0.1)"
-
-# Check if /jffs/scripts directory exists
-if [ ! -d "$SCRIPT_DIR" ]; then
-    echo "Error: Directory $SCRIPT_DIR does not exist. Exiting."
-    exit 1
-fi
-
-# Check for existing script
-if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
-    handle_existing_script
-fi
-
-# Check already configured interfaces
-check_configured_interfaces
-
-# Get available interfaces
-get_available_interfaces
-
-# Select interfaces
-select_interfaces
-
-# Get MAC address
-get_mac_address
-
-# Write the main script
-write_script
-
-# Add to services-start
-add_to_services_start
-
-echo "Installation completed successfully
+# Start the script
+main_menu
