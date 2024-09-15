@@ -183,21 +183,6 @@ check_for_update() {
     REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
     if [ $? -ne 0 ]; then
         UPDATE_STATUS="\033[1;31m[Update check failed]\033[0m"
-        return
-    fi
-
-    if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
-        UPDATE_STATUS="\033[1;32m[New version \033[34mv$REMOTE_VERSION\033[1;32m available]\033[0m"
-    else
-        UPDATE_STATUS="\033[1;32m[No update available]\033[0m"
-    fi
-}
-
-# Function to check for a new version
-check_for_update() {
-    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
-    if [ $? -ne 0 ]; then
-        UPDATE_STATUS="\033[1;31m[Update check failed]\033[0m"
         return 1  # Update check failed
     fi
 
