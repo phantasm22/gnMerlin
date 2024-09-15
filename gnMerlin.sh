@@ -217,10 +217,8 @@ install_update() {
     if [ $? -eq 0 ]; then
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
         chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
+        sleep 2
         exec "$SCRIPT_DIR/$SCRIPT_NAME"
-        echo ""
-        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-        read
     else
         echo -e "\033[1;31mError updating the script.\033[0m"
         echo ""
