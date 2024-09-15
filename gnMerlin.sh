@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.0"
+SCRIPT_VERSION="0.1.1"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -221,10 +221,10 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo ""
-        echo -e "   \033[34mi\033[0m - Install or Update Guest Network\033[0m"
-        echo -e "   \033[34mu\033[0m - Uninstall Guest Network\033[0m"
-        echo -e "   \033[34mv\033[0m - Check for Script Updates\033[0m"
-        echo -e "   \033[34me\033[0m - Exit\033[0m"
+        echo -e "   \033[0mi - Install or Update Guest Network"
+        echo -e "   u - Uninstall Guest Network"
+        echo -e "   v - Check for Script Updates"
+        echo -e "   e - Exit"
         echo ""
         echo -n "Enter your choice: "
         read choice
