@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.7"
+SCRIPT_VERSION="0.1.8"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -216,6 +216,9 @@ prompt_for_forced_update() {
     read force_update_confirm
     if [ "$force_update_confirm" != "y" ]; then
         echo "Update cancelled."
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
         return 1
     fi
     return 0
@@ -229,6 +232,9 @@ install_update() {
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
         chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
         exec "$SCRIPT_DIR/$SCRIPT_NAME"
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
     else
         echo -e "\033[1;31mError updating the script.\033[0m"
         echo ""
