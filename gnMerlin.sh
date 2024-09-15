@@ -196,4 +196,40 @@ add_to_services_start() {
         echo "fi #Added by gnMerlin" >>"$SERVICE_START_SCRIPT"
     else
         echo "Script already exists in $SERVICE_START_SCRIPT"
-   
+    fi
+}
+
+# Start of the installer script
+display_ascii_art
+echo "Welcome to the Guest Network for Merlin Installer (Version 0.1)"
+
+# Check if /jffs/scripts directory exists
+if [ ! -d "$SCRIPT_DIR" ]; then
+    echo "Error: Directory $SCRIPT_DIR does not exist. Exiting."
+    exit 1
+fi
+
+# Check for existing script
+if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
+    handle_existing_script
+fi
+
+# Check already configured interfaces
+check_configured_interfaces
+
+# Get available interfaces
+get_available_interfaces
+
+# Select interfaces
+select_interfaces
+
+# Get MAC address
+get_mac_address
+
+# Write the main script
+write_script
+
+# Add to services-start
+add_to_services_start
+
+echo "Installation completed successfully
