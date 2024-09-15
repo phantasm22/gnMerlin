@@ -2,8 +2,7 @@
 
 # Version 0.1 - Guest Network for Merlin Script Installer
 
-# Array of predefined interfaces as a space-separated string
-INTERFACES="wl0.1 wl0.2 wl0.3 wl0.4 wl1.1 wl1.2 wl1.3 wl1.4"
+# Variables
 SELECTED_INTERFACES=""
 CONFIGURED_INTERFACES=""
 SCRIPT_DIR="/jffs/scripts"
@@ -41,9 +40,25 @@ check_configured_interfaces() {
     fi
 }
 
+# Function to dynamically get all wireless interfaces matching 'wl<digit>.<digit>'
+get_available_interfaces() {
+    # Extract interfaces matching "wl<digit>.<digit>" from the output of brctl show
+    INTERFACES=$(brctl show | grep -o 'wl[0-9]\.[0-9]' | sort -u)
+    
+    if [ -z "$INTERFACES" ]; then
+        echo "Error: No wireless interfaces (matching 'wl<digit>.<digit>') found. Exiting."
+        exit 1
+    fi
+}
+
 # Function to ask the user to select interfaces
 select_interfaces() {
     echo "Available interfaces for guest network:"
+    if [ -z "$INTERFACES" ]; then
+        echo "No wireless interfaces found. Exiting."
+        exit 0
+    fi
+
     for interface in $INTERFACES; do
         echo "Do you want to apply guest network isolation on $interface? (y/n)"
         read answer
@@ -181,37 +196,4 @@ add_to_services_start() {
         echo "fi #Added by gnMerlin" >>"$SERVICE_START_SCRIPT"
     else
         echo "Script already exists in $SERVICE_START_SCRIPT"
-    fi
-}
-
-# Start of the installer script
-display_ascii_art
-echo "Welcome to the Guest Network for Merlin Installer (Version 0.1)"
-
-# Check if /jffs/scripts directory exists
-if [ ! -d "$SCRIPT_DIR" ]; then
-    echo "Directory $SCRIPT_DIR does not exist. Please create it before running this script."
-    exit 1
-fi
-
-# Check for already configured interfaces
-check_configured_interfaces
-
-# Select interfaces
-select_interfaces
-
-# Check if the script already exists and handle it
-if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
-    handle_existing_script
-fi
-
-# Extract MAC address of the default gateway
-get_mac_address
-
-# Write the script to /jffs/scripts
-write_script
-
-# Add to services-start if necessary
-add_to_services_start
-
-echo "Installation complete."
+   
