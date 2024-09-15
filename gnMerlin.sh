@@ -213,6 +213,8 @@ prompt_for_forced_update() {
 # Function to download and install the new script
 install_update() {
     echo -e "\033[1;32mDownloading the latest version...\033[0m"
+    echo -e "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL$SCRIPT_NAME"
+    read
     curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL$SCRIPT_NAME"
     if [ $? -eq 0 ]; then
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
