@@ -2,7 +2,7 @@
 
 # Version of the script
 SCRIPT_VERSION="0.1.8"
-REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/"
+REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
 SELECTED_INTERFACES=""
@@ -186,7 +186,7 @@ uninstall_guest_network() {
 
 # Function to check for a new version
 check_for_update() {
-    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL$SCRIPT_VER")
+    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL/$SCRIPT_VER")
     if [ $? -ne 0 ]; then
         UPDATE_STATUS="\033[1;31m[Update check failed]\033[0m"
         return 1  # Update check failed
@@ -219,8 +219,8 @@ prompt_for_forced_update() {
 install_update() {
     echo ""
     echo -e "\033[1;32mDownloading the latest version...\033[0m"
-    echo -e "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL$SCRIPT_NAME"
-    curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL$SCRIPT_NAME"
+    echo -e "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL/$SCRIPT_NAME"
+    curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL/$SCRIPT_NAME"
     if [ $? -eq 0 ]; then
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
         chmod +x "$PWD/$SCRIPT_NAME"
