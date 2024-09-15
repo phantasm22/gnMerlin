@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.4"
+SCRIPT_VERSION="0.1.5"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -176,14 +176,24 @@ uninstall_guest_network() {
     read
 }
 
-# Function to update the script version
-update_script() {
+# Function to check for a new version
+check_for_update() {
     REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
     if [ $? -ne 0 ]; then
         echo "Error fetching remote version. Exiting."
+        UPDATE_STATUS="[Update check failed]"
         return
     fi
 
+    if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
+        UPDATE_STATUS="[New version \033[34mv$REMOTE_VERSION\033[0m available]"
+    else
+        UPDATE_STATUS="[No update available]"
+    fi
+}
+
+# Function to update the script version
+update_script() {
     if [ "$SCRIPT_VERSION" != "$REMOTE_VERSION" ]; then
         echo -e "New version \033[34mv$REMOTE_VERSION\033[0m available."
         echo -n "Would you like to update? (y/n): "
@@ -239,18 +249,22 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo ""
-        echo -e "   \033[0mi - Install or Update Guest Network Isolation"
-        echo -e "   u - Uninstall Guest Network Isolation"
-        echo -e "   v - Force Update gnMerlin script"
-        echo -e "   e - Exit"
+        echo -e "   \033[0mi. Install or Update Guest Network Isolation"
+        echo ""
+        echo -e "   u. Update gnMerlin script version"
+        echo -e "      $UPDATE_STATUS"
+        echo ""
+        echo -e "   z. Uninstall Guest Network Isolation"
+        echo ""
+        echo -e "   e. Exit"
         echo ""
         echo -n "Enter your choice: "
         read choice
 
         case "$choice" in
             [Ii]) install_update_guest_network ;;
-            [Uu]) uninstall_guest_network ;;
-            [Vv]) update_script ;;
+            [Uu]) update_script ;;
+            [Zz]) uninstall_guest_network ;;
             [Ee]) echo "Exiting..."; exit 0 ;;
             *) echo "Invalid option. Please try again." ;;
         esac
