@@ -271,7 +271,7 @@ install_update_guest_network() {
 main_menu() {
     check_for_update
     while true; do
-        clear
+        #clear
         display_ascii_art
         check_configured_interfaces
         echo -e ""
