@@ -57,6 +57,7 @@ select_interfaces() {
     echo -e "\033[1;32mAvailable interfaces for guest network:\033[0m"
     echo "$INTERFACES"
     echo ""
+    SELECTED_INTERFACES=""
 
     for interface in $INTERFACES; do
         echo -ne "\033[1;32mDo you want to apply guest network isolation on $interface? (y/n): \033[0m"
