@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.2"
+SCRIPT_VERSION="0.1.3"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
 
 # Variables
@@ -113,6 +113,22 @@ add_to_services_start() {
     fi
 }
 
+start_gnMerlin() {
+    if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
+        echo "Starting gnMerlin script..."
+        nohup sh "$SCRIPT_DIR/$SCRIPT_NAME" >/dev/null 2>&1 &
+        if [ $? -eq 0 ]; then
+            echo "gnMerlin started successfully."
+        else
+            echo "Error: Failed to start gnMerlin."
+            return
+        fi
+    else
+        echo "Error: gnMerlin script not found at $SCRIPT_DIR/$SCRIPT_NAME."
+        return
+    fi
+}
+
 # Function to handle existing script removal
 uninstall_guest_network() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ] && ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
@@ -153,7 +169,7 @@ uninstall_guest_network() {
         fi
     fi
 
-    echo "gnMerlin has been uninstalled successfully."
+    echo "gnMerlin has been uninstalled successfully. Please reboot to take effect."
     echo ""
     echo "Press enter to continue"
     read
@@ -205,6 +221,7 @@ install_update_guest_network() {
     if [ -n "$SELECTED_INTERFACES" ]; then
         write_script
         add_to_services_start
+        start_gnMerlin
         echo "Installation/Update completed!"
         check_configured_interfaces
     fi
