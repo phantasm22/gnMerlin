@@ -2,13 +2,14 @@
 
 # Version of the script
 SCRIPT_VERSION="0.1.8"
-REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/version.txt"
+REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main/"
 
 # Variables
 SELECTED_INTERFACES=""
 CONFIGURED_INTERFACES=""
 SCRIPT_DIR="/jffs/scripts"
 SCRIPT_NAME="gnMerlin.sh"
+SCRIPT_VER="version.txt"
 SERVICE_START_SCRIPT="/jffs/scripts/services-start"
 CONFIGURATION_STATUS=""
 
@@ -180,7 +181,7 @@ uninstall_guest_network() {
 
 # Function to check for a new version
 check_for_update() {
-    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL")
+    REMOTE_VERSION=$(curl -s "$REMOTE_VERSION_URL$SCRIPT_VER")
     if [ $? -ne 0 ]; then
         UPDATE_STATUS="\033[1;31m[Update check failed]\033[0m"
         return 1  # Update check failed
@@ -212,7 +213,7 @@ prompt_for_forced_update() {
 # Function to download and install the new script
 install_update() {
     echo -e "\033[1;32mDownloading the latest version...\033[0m"
-    curl -o "$SCRIPT_DIR/$SCRIPT_NAME" "https://raw.githubusercontent.com/phantasm22/gnMerlin/main/$SCRIPT_NAME"
+    curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL$SCRIPT_NAME"
     if [ $? -eq 0 ]; then
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
         chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
