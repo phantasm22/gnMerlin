@@ -11,11 +11,17 @@ gnMerlin is a shell script designed for managing guest network settings on Merli
 
 ## Prerequisites
 - Merlin firmware router.
-- `curl` and `ebtables` installed on the router.
+- `curl`, `wget`, and `ebtables` installed on the router.
 
 ## Installation
+```
+wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh
+chmod +x ./gnMerlin.sh
+```
 
 ### Clone the repository
 ```bash
 git clone https://github.com/phantasm22/gnMerlin.git
 cd gnMerlin
+```
+
