@@ -204,7 +204,7 @@ check_for_update() {
 # Function to prompt for a forced update
 prompt_for_forced_update() {
     echo ""
-    echo -ne "\033[1;33mYou already have the latest version installed. \033[1;32mWould you like to force an update? (y/n): \033[0m"
+    echo -ne "\033[1;33mYou already have the latest version installed.\n.  \033[1;32mWould you like to force an update? (y/n): \033[0m"
     read force_update_confirm
     if [ "$force_update_confirm" != "y" ]; then
         echo "Update cancelled."
