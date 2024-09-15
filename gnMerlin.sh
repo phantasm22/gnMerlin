@@ -21,7 +21,7 @@ display_ascii_art() {
     echo "    | (_| | | | | |  | |  __/ |  | | | | | |"
     echo "     \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|"
     echo -e "      __/ |"
-    echo -e "     |___/                          \033[32mv$SCRIPT_VERSION\033[0m"  # Version number in dark green
+    echo -e "     |___/                            \033[32mv$SCRIPT_VERSION\033[0m"  # Version number in dark green
     echo -e "\033[38;5;214m================= By Phantasm22 =================\033[0m"
     echo -e "\033[0m"  # Reset color
     echo ""
