@@ -126,8 +126,8 @@ EOF
     done
     cat >> "$SCRIPT_DIR/$SCRIPT_NAME" <<EOF
 /usr/sbin/ebtables -I FORWARD -d Broadcast -j ACCEPT
-/usr/sbin/ebtables -I FORWARD -d \$MACADDRESS -j ACCEPT
-/usr/sbin/ebtables -I FORWARD -s \$MACADDRESS -j ACCEPT
+/usr/sbin/ebtables -I FORWARD -d $MACADDRESS -j ACCEPT
+/usr/sbin/ebtables -I FORWARD -s $MACADDRESS -j ACCEPT
 EOF
     chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
     echo ""
