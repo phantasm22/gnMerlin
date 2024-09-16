@@ -86,22 +86,22 @@ select_interfaces() {
 write_script() {
     
     # Extract the default gateway from the output of /usr/sbin/ip route
-    IPADDRESS=`/usr/sbin/ip route | awk '/^default/ {print $3}'`
+    IPADDRESS=$(/usr/sbin/ip route | awk '/^default/ {print $3}')
 
     # Check if the IPADDRESS is not empty
     if [ -n "$IPADDRESS" ]; then
         # Extract the MAC address using arp and grep
-        MACADDRESS=`/sbin/arp | grep "($IPADDRESS)" | awk '{print $4}'`
-            # Check if the MACADDRESS is not empty
-            if [ -n "$MACADDRESS" ]; then
-            else
-                echo ""
-                echo -e "\033[1;31mError: MAC Address not found.\033[0m"
-                echo ""
-                echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-                read
-                return
-            fi
+        MACADDRESS=$(/sbin/arp | grep "($IPADDRESS)" | awk '{print $4}')
+    
+        # Check if the MACADDRESS is not empty
+        if [ -z "$MACADDRESS" ]; then
+            echo ""
+            echo -e "\033[1;31mError: MAC Address not found.\033[0m"
+            echo ""
+            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+            read
+            return
+        fi
     else
         echo ""
         echo -e "\033[1;31mError: Default Gateway not found.\033[0m"
@@ -110,7 +110,7 @@ write_script() {
         read
         return
     fi
-    
+
     cat > "$SCRIPT_DIR/$SCRIPT_NAME" <<EOF
 #!/bin/sh
 # gnMerlin Guest Network Isolation Script
