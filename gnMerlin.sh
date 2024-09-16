@@ -130,7 +130,6 @@ EOF
 /usr/sbin/ebtables -I FORWARD -s $MACADDRESS -j ACCEPT
 EOF
     chmod +x "$SCRIPT_DIR/$SCRIPT_NAME"
-    echo ""
     echo "gnMerlin script written and made executable."
 }
 
@@ -155,9 +154,66 @@ start_gnMerlin() {
             return
         fi
     else
-        echo "Error: gnMerlin script not found at $SCRIPT_DIR/$SCRIPT_NAME."
+        echo ""
+        echo "\033[1;31mError: gnMerlin script not found at $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
         return
     fi
+}
+
+# Function to list ebtables chains
+list_ebtables_chains() {
+    echo ""
+    echo -e "\033[1;31mListing all ebtables chains:\033[0m"
+    ebtables -L
+    echo ""
+    echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+    read
+}
+
+# Function to flush ebtables chains
+flush_ebtables_chains() {
+    echo ""
+    echo -e "\033[1;31mFlushing all ebtables chains...\033[0m"
+    ebtables -F
+    echo ""
+    echo -e "\033[1;32mDone!\033[0m"
+    echo ""
+    echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+    read
+}
+
+# Function to delete ebtables rules from script
+delete_ebtables_rules() {
+    if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
+        echo ""
+        echo -e "\033[1;31mError: gnMerlin not installed. Nothing to do.\033[0m"
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
+        return 1
+    fi
+    echo ""
+    echo "Reading ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME..."
+    
+    # Loop through each line in the script
+    while IFS= read -r line; do
+        # Check if the line contains an ebtables rule
+        if [[ $line =~ ^/usr/sbin/ebtables ]]; then
+            # Replace "-I" with "-D" to delete the rule
+            delete_rule=$(echo "$line" | sed 's/-I/-D/')
+            echo "Deleting rule: $delete_rule"
+            $delete_rule
+        fi
+    done < "$SCRIPT_DIR/$SCRIPT_NAME"
+
+    echo ""
+    echo -e "\033[1;32mCompleted deleting ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
+    echo ""
+    echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+    read
 }
 
 # Function to handle existing script removal
@@ -282,6 +338,7 @@ update_script() {
         fi
     fi
 }
+
 # Function to install or update guest network
 install_update_guest_network() {
     get_available_interfaces
@@ -307,8 +364,14 @@ main_menu() {
         display_ascii_art
         check_configured_interfaces
         echo -e ""
-        echo -e "   i. Install or Update Guest Network Isolation"
+        echo -e "   1. Install or Update Guest Network Isolation"
         echo -e "      $CONFIGURATION_STATUS"
+        echo ""
+        echo -e "   2. List all rules in place"
+        echo -e ""
+        echo -e "   3. Delete rules in place by gnMerlin"
+        echo -e ""
+        echo -e "   4. Flush all rules in place\033[0m"
         echo -e ""
         echo -e "   u. Update gnMerlin script version"
         echo -e "      $UPDATE_STATUS"
@@ -321,7 +384,10 @@ main_menu() {
         read choice
 
         case "$choice" in
-            [Ii]) install_update_guest_network ;;
+            [1]) install_update_guest_network ;;
+            [2]) list_ebtables_chains ;;
+            [3]) delete_ebtables_rules ;;
+            [4]) flush_ebtables_chains ;;
             [Uu]) update_script ;;
             [Zz]) uninstall_guest_network ;;
             [Ee]) echo "Exiting..."; exit 0 ;;
@@ -332,3 +398,5 @@ main_menu() {
 
 # Start the script with the main menu
 main_menu
+
+
