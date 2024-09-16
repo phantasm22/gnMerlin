@@ -19,7 +19,6 @@ gnMerlin is a shell script designed for managing guest network isolation on Merl
 
 ### Clone the repository
 ```
-bash
 git clone https://github.com/phantasm22/gnMerlin.git
 cd gnMerlin
 ```
