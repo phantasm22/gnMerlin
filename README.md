@@ -24,21 +24,21 @@ cd gnMerlin
 ```
 
 ### Download the script using wget
-
+```
 wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh
 chmod +x gnMerlin.sh
-
+```
 ### Run the installer
 
-./gnMerlin.sh
+`./gnMerlin.sh`
 
 ### Usage
 
 Upon running the script, you will see a menu with the following options:
 
 	•	Install or update the guest network settings.
-	•	Uninstall the guest network settings.
-	•	Check for updates to the script.
+	•	Update the script version.
+	•	Uninstall the settings.
 	•	Exit the script.
 
 ### Example Menu
