@@ -388,6 +388,7 @@ install_update_guest_network() {
     # Debugging line to check the return status of select_interfaces
     echo "Return status of select_interfaces: $?"
     if [ $? -eq 1 ]; then
+        echo
         return
     fi
     if [ -n "$SELECTED_INTERFACES" ]; then
