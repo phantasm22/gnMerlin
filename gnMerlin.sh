@@ -210,7 +210,7 @@ flush_ebtables_chains() {
 
 #Function wrapper for deleting ebtables and rules from script
 delete_ebtables_rules_wrapper() {
-    delete_ebtables_rules()
+    delete_ebtables_rules
     echo ""
     echo -e "\033[1;32mPress enter to return to the menu\033[0m"
 }
