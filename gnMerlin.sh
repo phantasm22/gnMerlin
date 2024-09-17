@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.2.4"
+SCRIPT_VERSION="0.2.5"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
@@ -256,7 +256,7 @@ uninstall_guest_network() {
         echo ""
         echo -e "\033[1;32mPress enter to return to the menu\033[0m"
         read
-        return
+        return 0
     fi
     
     echo ""
@@ -264,7 +264,10 @@ uninstall_guest_network() {
     read confirm
     if [ "$confirm" != "y" ]; then
         echo "Uninstall cancelled."
-        return
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
+        return 0
     fi
 
    # Attempt to remove the gnMerlin script
@@ -297,13 +300,14 @@ uninstall_guest_network() {
         echo ""
         echo -e "\033[1;32mPress enter to return to the menu\033[0m"
         read
-        return
+        return 0
     fi
     
     echo -e "\033[1;32mgnMerlin has been uninstalled successfully.\033[0m"
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
     read
+    return 0
 }
 
 # Function to check for a new version
@@ -396,6 +400,7 @@ install_update_guest_network() {
         check_configured_interfaces
     else # No interfaces selected, check to uninstall
         uninstall_guest_network
+        return
     fi
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
