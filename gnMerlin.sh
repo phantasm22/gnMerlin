@@ -77,8 +77,8 @@ select_interfaces() {
     echo -ne "\033[1;32mIs this correct? (y/n): \033[0m"
     read confirm
     if [ "$confirm" != "y" ]; then
-        echo "Returning to the main menu."
-        return 1
+        echo -e "\033[1;33mReturning to the main menu.\033[0m"
+        return "1"
     fi
 }
 
