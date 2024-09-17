@@ -19,18 +19,20 @@ gnMerlin is a shell script designed to isolate guest wireless networks on router
 ## Installation
 
 1. **Upload Script**  
-   Save the `gnMerlin.sh` file to `/jffs/scripts/`.
+   Download `gnMerlin.sh` file to a suitable location. Options:
+   `curl -o ./gnMerlin.sh https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh`
+   `wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh`
 
-2. **Make Script Executable**  
+3. **Make Script Executable**  
    Run the following command to make the script executable:
    ```bash
-   chmod +x /jffs/scripts/gnMerlin.sh
+   chmod +x ./gnMerlin.sh
    ```
 
-3. **Run Script**  
+4. **Run Script**  
    To run the script and configure guest network isolation:
    ```bash
-   sh /jffs/scripts/gnMerlin.sh
+   ./gnMerlin.sh
    ```
 
 ## Usage
@@ -38,21 +40,25 @@ gnMerlin is a shell script designed to isolate guest wireless networks on router
 Once the script is running, you will be presented with a menu offering several options:
 
 1. **Install or Update Guest Network Isolation**  
-   Configure or update network isolation for your guest interfaces. You can select from available wireless interfaces for isolation.
+   Configure or update network isolation for your guest interfaces. You can select from available wireless interfaces for isolation. Examples of interfaces:
+   * wl0.1 = first guest network on 2.4GHz
+   * wl0.2 = second guest network on 2.4GHz
+   * wl1.1 = first guest network on 5GHz
+   * wl1.1 = second guest network on 5GHz
    
-2. **List All Ebtables Rules**  
+3. **List All Ebtables Rules**  
    Display the current `ebtables` rules and chains.
    
-3. **Delete Ebtables Rules for gnMerlin**  
+4. **Delete Ebtables Rules for gnMerlin**  
    Remove the `ebtables` rules created by gnMerlin for network isolation.
    
-4. **Flush All Ebtables Rules**  
+5. **Flush All Ebtables Rules**  
    Flush all `ebtables` rules, including those unrelated to gnMerlin.
    
-5. **Update gnMerlin Script**  
+6. **Update gnMerlin Script**  
    Check for new versions of the script and update if available.
    
-6. **Uninstall Guest Network Isolation**  
+7. **Uninstall Guest Network Isolation**  
    Remove all gnMerlin-related configurations, including the script and any applied rules.
 
 ## Uninstall
