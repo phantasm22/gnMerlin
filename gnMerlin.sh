@@ -163,6 +163,24 @@ start_gnMerlin() {
     fi
 }
 
+# Function to list ebtables chains
+list_ebtables_chains() {
+    echo ""
+    echo -e "\033[1;32mListing all ebtables chains:\033[0m"
+    
+    # Execute the ebtables command and capture its status
+    if ! ebtables -L > /dev/null 2>&1; then
+        echo -e "\033[1;31mError: Failed to list ebtables chains. Please check if ebtables is installed and try again.\033[0m"
+    else
+        # If successful, show the output of ebtables
+        ebtables -L
+    fi
+    
+    echo ""
+    echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+    read
+}
+
 # Function to delete ebtables rules from script
 delete_ebtables_rules() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
