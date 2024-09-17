@@ -166,7 +166,7 @@ start_gnMerlin() {
 # Function to list ebtables chains
 list_ebtables_chains() {
     echo ""
-    echo -e "\033[1;31mListing all ebtables chains:\033[0m"
+    echo -e "\033[1;32mListing all ebtables chains:\033[0m"
     
     # Execute the ebtables command and capture its status
     if ! ebtables -L > /dev/null 2>&1; then
@@ -184,12 +184,12 @@ list_ebtables_chains() {
 # Function to flush ebtables chains
 flush_ebtables_chains() {
     echo ""
-    echo -e "\033[1;31mWarning: This will flush all ebtables chains.\033[0m"
-    echo -ne "\033[1;32mEnter \033[1;34flush\033[1;32 to confirm: \033[0m"
+    echo -e "\033[1;33mWarning: This will flush all ebtables chains.\033[0m"
+    echo -ne "\033[1;32mEnter \033[1;34mflush\033[1;32m to confirm: \033[0m"
     read confirmation
 
     # Check if the user entered the correct confirmation
-    if [ "$confirmation" == "flush" || "$confirmation" == "Flush" || "$confirmation" == "FLUSH" ]; then
+    if [[ "$confirmation" == "flush" || "$confirmation" == "Flush" || "$confirmation" == "FLUSH" ]]; then
         echo -e "\033[1;31mFlushing all ebtables chains...\033[0m"
         
         # Execute the ebtables flush command and check its status
@@ -210,9 +210,18 @@ flush_ebtables_chains() {
 
 #Function wrapper for deleting ebtables and rules from script
 delete_ebtables_rules_wrapper() {
+    echo ""
+    echo -e "\033[1;33mWarning: This will delete all ebtables rules written by gnMerlin.\033[0m"
+    echo -ne "\033[1;32mAre you sure you want to continue? (y/n): \033[0m"
+    read confirm
+    if [ "$confirm" != "y" ]; then
+        echo -e "\033[1;32mCancelled.\033[0m"
+        return
+    fi
     delete_ebtables_rules
     echo ""
     echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+    read
 }
 
 # Function to delete ebtables rules from script
