@@ -1,86 +1,89 @@
-Here’s the updated README.md content with the “Download the script using wget” section formatted correctly in Markdown:
 
-# gnMerlin
+# gnMerlin - Guest Network Isolation for ASUS Merlin
 
-## Description
-gnMerlin is a shell script designed for managing guest network isolation on Merlin firmware routers that don't leverage the native guest network isolation. For example, routers in AP mode do not have native guest network isolation. This script allows users to install, update, and uninstall guest network isolation features seamlessly.
+gnMerlin is a shell script designed to isolate guest wireless networks on routers running ASUS Merlin firmware. This script utilizes `ebtables` to block traffic between the main network and guest networks while allowing communication with the router.
 
 ## Features
-- Install or update guest network settings.
-- Check for script updates and download the latest version.
-- Uninstall guest network settings easily.
-- User-friendly command-line interface with status notifications.
+- Isolates guest networks on selected wireless interfaces.
+- Blocks forwarding of guest traffic, ensuring guest clients can only communicate with the router.
+- Simple CLI interface to manage and configure isolation.
+- Supports update checks and installation of the latest version.
+- Handles custom network interface selection.
+- Option to uninstall and remove all configured rules.
 
-## Prerequisites
-- Merlin firmware router.
-- `curl`, `wget`, and `ebtables` installed on the router.
+## Requirements
+- ASUS Merlin firmware installed on your router.
+- Access to `/jffs` partition for custom scripts.
+- `ebtables` installed (can be checked via `ebtables -L`).
 
 ## Installation
 
-### Clone the repository
-```
-git clone https://github.com/phantasm22/gnMerlin.git
-cd gnMerlin
-```
+1. **Upload Script**  
+   Save the `gnMerlin.sh` file to `/jffs/scripts/`.
 
-### Download the script using wget
-```
-wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh
-chmod +x gnMerlin.sh
-```
-### Run the installer
+2. **Make Script Executable**  
+   Run the following command to make the script executable:
+   ```bash
+   chmod +x /jffs/scripts/gnMerlin.sh
+   ```
 
-`./gnMerlin.sh`
+3. **Run Script**  
+   To run the script and configure guest network isolation:
+   ```bash
+   sh /jffs/scripts/gnMerlin.sh
+   ```
 
-### Usage
+## Usage
 
-Upon running the script, you will see a menu with the following options:
+Once the script is running, you will be presented with a menu offering several options:
 
-	•	Install or update the guest network settings.
-	•	Update the script version.
-	•	Uninstall the settings.
-	•	Exit the script.
+1. **Install or Update Guest Network Isolation**  
+   Configure or update network isolation for your guest interfaces. You can select from available wireless interfaces for isolation.
+   
+2. **List All Ebtables Chains**  
+   Display the current `ebtables` rules and chains.
+   
+3. **Delete Ebtables Chains for gnMerlin**  
+   Remove the `ebtables` rules created by gnMerlin for network isolation.
+   
+4. **Flush All Ebtables Chains**  
+   Flush all `ebtables` rules, including those unrelated to gnMerlin.
+   
+5. **Update gnMerlin Script**  
+   Check for new versions of the script and update if available.
+   
+6. **Uninstall Guest Network Isolation**  
+   Remove all gnMerlin-related configurations, including the script and any applied rules.
 
-### Example Menu
+## Uninstall
 
-```
-                 __  __           _ _       
-                |  \/  |         | (_)      
-      __ _ _ __ | \  / | ___ _ __| |_ _ __  
-     / _` | '_ \| |\/| |/ _ \ '__| | | '_ \ 
-    | (_| | | | | |  | |  __/ |  | | | | | |
-     \__, |_| |_|_|  |_|\___|_|  |_|_|_| |_|
-      __/ |
-     |___/                            v0.1.9
-================= By Phantasm22 =================
+To uninstall gnMerlin and remove all its rules:
+1. Run the script and select the `Uninstall Guest Network Isolation` option from the main menu.
+2. Alternatively, you can manually delete the script and any related entries from `/jffs/scripts/services-start`:
+   ```
+   rm /jffs/scripts/gnMerlin.sh
+   sed -i '/gnMerlin.sh/d' /jffs/scripts/services-start
+   ```
 
+## Troubleshooting
 
+- **No Wireless Interfaces Found**  
+  Ensure that wireless interfaces on your router match the `wl<digit>.<digit>` format. The script will only recognize interfaces with this format.
 
-   i. Install or Update Guest Network Isolation
-      [Installed: wl0.1]
+- **Ebtables Not Installed**  
+  If `ebtables` is not found, install it using your router's package manager, or ensure your firmware includes it.
 
-   u. Update gnMerlin script version
-      [No update available]
+- **MAC Address or Gateway Not Found**  
+  The script relies on your router's default gateway and ARP table to configure forwarding exceptions. Ensure your router is properly configured and has an active network.
 
-   z. Uninstall Guest Network Isolation
+## Versioning
 
-   e. Exit
+This project follows Semantic Versioning (SemVer). For the available versions, see the tags on this repository.
 
-Enter your choice: 
-```
+## License
 
-### Contributing
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
+## Contact
 
-### License
-
-This project is licensed under the GNU License. See the LICENSE file for details.
-
-### Acknowledgments
-
-	•	Special thanks to the Merlin firmware community for their support and resources.
-
-### Contact
-
-For any inquiries, please reach out
+For any issues or suggestions, feel free to open an issue on the [GitHub repository](https://github.com/phantasm22/gnMerlin) or contact me directly.
