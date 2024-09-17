@@ -242,7 +242,7 @@ delete_ebtables_rules() {
                 # Replace "-I" with "-D" to delete the rule
                 delete_rule=$(echo "$line" | sed 's/-I/-D/')
                 echo "Deleting rule: $delete_rule"
-                $delete_rule
+                $delete_rule > /dev/null 2>&1
                 ;;
         esac
     done < "$SCRIPT_DIR/$SCRIPT_NAME"
