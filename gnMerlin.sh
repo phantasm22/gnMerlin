@@ -181,34 +181,6 @@ list_ebtables_chains() {
     read
 }
 
-# Function to delete ebtables rules from script
-delete_ebtables_rules() {
-    if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
-        echo ""
-        echo -e "\033[1;31mError: gnMerlin not installed. Nothing to do.\033[0m"
-        return 0
-    fi
-    echo ""
-    echo "Reading ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME..."
-    
-    # Loop through each line in the script
-    while IFS= read -r line; do
-        # Check if the line contains an ebtables rule
-        case "$line" in
-            /usr/sbin/ebtables*)  # Match lines that start with /usr/sbin/ebtables
-                # Replace "-I" with "-D" to delete the rule
-                delete_rule=$(echo "$line" | sed 's/-I/-D/')
-                echo "Deleting rule: $delete_rule"
-                $delete_rule
-                ;;
-        esac
-    done < "$SCRIPT_DIR/$SCRIPT_NAME"
-    
-    echo ""
-    echo -e "\033[1;32mCompleted deleting ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
-    return
-}
-
 # Function to flush ebtables chains
 flush_ebtables_chains() {
     echo ""
@@ -265,13 +237,16 @@ delete_ebtables_rules() {
     # Loop through each line in the script
     while IFS= read -r line; do
         # Check if the line contains an ebtables rule
-        if [[ $line =~ ^/usr/sbin/ebtables ]]; then
-            # Replace "-I" with "-D" to delete the rule
-            delete_rule=$(echo "$line" | sed 's/-I/-D/')
-            echo "Deleting rule: $delete_rule"
-            $delete_rule
-        fi
+        case "$line" in
+            /usr/sbin/ebtables*)  # Match lines that start with /usr/sbin/ebtables
+                # Replace "-I" with "-D" to delete the rule
+                delete_rule=$(echo "$line" | sed 's/-I/-D/')
+                echo "Deleting rule: $delete_rule"
+                $delete_rule
+                ;;
+        esac
     done < "$SCRIPT_DIR/$SCRIPT_NAME"
+    
     echo ""
     echo -e "\033[1;32mCompleted deleting ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
     return
