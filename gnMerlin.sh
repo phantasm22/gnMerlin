@@ -49,7 +49,7 @@ get_available_interfaces() {
     
     if [ -z "$INTERFACES" ]; then
         echo -e "\033[1;31mError: No wireless interfaces (matching 'wl<digit>.<digit>') found. Exiting.\033[0m"
-        exit 1
+        return 1
     fi
 }
 
@@ -385,6 +385,8 @@ update_script() {
 install_update_guest_network() {
     get_available_interfaces
     select_interfaces
+    # Debugging line to check the return status of select_interfaces
+    echo "Return status of select_interfaces: $?"
     if [ $? -eq 1 ]; then
         return
     fi
