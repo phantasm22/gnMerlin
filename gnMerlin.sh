@@ -385,8 +385,10 @@ update_script() {
 install_update_guest_network() {
     get_available_interfaces
     select_interfaces
-    if [ "$?" != "0" ]; then
-        echo "about to run return command"
+    if [ $? != 0 ]; then
+        echo ""
+        echo -e "\033[1;32mPress enter to continue\033[0m"
+        read
         return
     fi
     if [ -n "$SELECTED_INTERFACES" ]; then
