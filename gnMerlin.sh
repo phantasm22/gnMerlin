@@ -70,7 +70,7 @@ select_interfaces() {
 
     if [ -z "$SELECTED_INTERFACES" ]; then
         echo -e "\033[1;33mNo interfaces selected. Returning to the main menu.\033[0m"
-        return
+        return 1
     fi
 
     echo -e "\033[1;32mSelected interfaces: \033[1;34m$SELECTED_INTERFACES\033[0m"
@@ -247,7 +247,6 @@ delete_ebtables_rules() {
         esac
     done < "$SCRIPT_DIR/$SCRIPT_NAME"
     
-    echo ""
     echo -e "\033[1;32mCompleted deleting ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
     return
 }
@@ -386,6 +385,9 @@ update_script() {
 install_update_guest_network() {
     get_available_interfaces
     select_interfaces
+    if [ $? -eq 1 ]; then
+            return 1
+        fi
     if [ -n "$SELECTED_INTERFACES" ]; then
         delete_ebtables_rules #clear out any old rules first
         write_script
