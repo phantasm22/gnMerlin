@@ -78,7 +78,7 @@ select_interfaces() {
     read confirm
     if [ "$confirm" != "y" ]; then
         echo "Returning to the main menu."
-        return
+        return 1
     fi
 }
 
