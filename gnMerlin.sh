@@ -166,11 +166,11 @@ start_gnMerlin() {
 # Function to list ebtables chains
 list_ebtables_chains() {
     echo ""
-    echo -e "\033[1;32mListing all ebtables chains:\033[0m"
+    echo -e "\033[1;32mListing all ebtables rules:\033[0m"
     
     # Execute the ebtables command and capture its status
     if ! ebtables -L > /dev/null 2>&1; then
-        echo -e "\033[1;31mError: Failed to list ebtables chains. Please check if ebtables is installed and try again.\033[0m"
+        echo -e "\033[1;31mError: Failed to list ebtables rules. Please check if ebtables is installed and try again.\033[0m"
     else
         # If successful, show the output of ebtables
         ebtables -L
@@ -184,19 +184,19 @@ list_ebtables_chains() {
 # Function to flush ebtables chains
 flush_ebtables_chains() {
     echo ""
-    echo -e "\033[1;33mWarning: This will flush all ebtables chains.\033[0m"
+    echo -e "\033[1;33mWarning: This will flush all ebtables rules.\033[0m"
     echo -ne "\033[1;32mEnter \033[1;34mflush\033[1;32m to confirm: \033[0m"
     read confirmation
 
     # Check if the user entered the correct confirmation
     if [ "$confirmation" = "flush" ] || [ "$confirmation" = "Flush" ] || [ "$confirmation" = "FLUSH" ]; then
-        echo -e "\033[1;31mFlushing all ebtables chains...\033[0m"
+        echo -e "\033[1;31mFlushing all ebtables rules...\033[0m"
         
         # Execute the ebtables flush command and check its status
         if ! ebtables -F > /dev/null 2>&1; then
-            echo -e "\033[1;31mError: Failed to flush ebtables chains. Please check if ebtables is installed and try again.\033[0m"
+            echo -e "\033[1;31mError: Failed to flush ebtables rules. Please check if ebtables is installed and try again.\033[0m"
         else
-            echo -e "\033[1;32mDone! All ebtables chains have been flushed.\033[0m"
+            echo -e "\033[1;32mDone! All ebtables rules have been flushed.\033[0m"
         fi
     else
         # If the confirmation is incorrect, display a cancellation message
