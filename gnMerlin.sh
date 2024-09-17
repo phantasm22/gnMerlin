@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.2.1"
+SCRIPT_VERSION="0.2.2"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
@@ -219,6 +219,10 @@ delete_ebtables_rules_wrapper() {
         return
     fi
     delete_ebtables_rules
+    if [ $? != 0 ]; then
+        echo ""
+        echo -e "\033[1;33mWarning: gnMerlin not installed. Nothing to do.\033[0m"
+    fi
     echo ""
     echo -e "\033[1;32mPress enter to return to the menu\033[0m"
     read
@@ -227,9 +231,7 @@ delete_ebtables_rules_wrapper() {
 # Function to delete ebtables rules from script
 delete_ebtables_rules() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
-        echo ""
-        echo -e "\033[1;31mError: gnMerlin not installed. Nothing to do.\033[0m"
-        return 0
+        return 1
     fi
     echo ""
     echo -e "\033[1;32mReading ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME...\033[0m"
