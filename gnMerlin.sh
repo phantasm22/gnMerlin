@@ -155,7 +155,7 @@ start_gnMerlin() {
         fi
     else
         echo ""
-        echo "\033[1;31mError: gnMerlin script not found at $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
+        echo -e "\033[1;31mError: gnMerlin script not found at $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
         echo ""
         echo -e "\033[1;32mPress enter to return to the menu\033[0m"
         read
@@ -189,7 +189,7 @@ flush_ebtables_chains() {
     read confirmation
 
     # Check if the user entered the correct confirmation
-    if [[ "$confirmation" == "flush" || "$confirmation" == "Flush" || "$confirmation" == "FLUSH" ]]; then
+    if [ "$confirmation" == "flush" || "$confirmation" == "Flush" || "$confirmation" == "FLUSH" ]; then
         echo -e "\033[1;31mFlushing all ebtables chains...\033[0m"
         
         # Execute the ebtables flush command and check its status
@@ -209,7 +209,7 @@ flush_ebtables_chains() {
 }
 
 #Function wrapper for deleting ebtables and rules from script
-delete_ebtables_rules_wrapper(){
+delete_ebtables_rules_wrapper() {
     delete_ebtables_rules()
     echo ""
     echo -e "\033[1;32mPress enter to return to the menu\033[0m"
