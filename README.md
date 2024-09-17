@@ -40,13 +40,13 @@ Once the script is running, you will be presented with a menu offering several o
 1. **Install or Update Guest Network Isolation**  
    Configure or update network isolation for your guest interfaces. You can select from available wireless interfaces for isolation.
    
-2. **List All Ebtables Chains**  
+2. **List All Ebtables Rules**  
    Display the current `ebtables` rules and chains.
    
-3. **Delete Ebtables Chains for gnMerlin**  
+3. **Delete Ebtables Rules for gnMerlin**  
    Remove the `ebtables` rules created by gnMerlin for network isolation.
    
-4. **Flush All Ebtables Chains**  
+4. **Flush All Ebtables Rules**  
    Flush all `ebtables` rules, including those unrelated to gnMerlin.
    
 5. **Update gnMerlin Script**  
