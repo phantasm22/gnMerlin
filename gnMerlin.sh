@@ -193,14 +193,15 @@ delete_ebtables_rules() {
     
     # Loop through each line in the script
     while IFS= read -r line; do
-        # Check if the line contains an ebtables rule using grep
-        echo "$line" | grep -q "^/usr/sbin/ebtables"
-        if [ $? -eq 0 ]; then
-            # Replace "-I" with "-D" to delete the rule
-            delete_rule=$(echo "$line" | sed 's/-I/-D/')
-            echo "Deleting rule: $delete_rule"
-            $delete_rule
-        fi
+        # Check if the line contains an ebtables rule
+        case "$line" in
+            /usr/sbin/ebtables*)  # Match lines that start with /usr/sbin/ebtables
+                # Replace "-I" with "-D" to delete the rule
+                delete_rule=$(echo "$line" | sed 's/-I/-D/')
+                echo "Deleting rule: $delete_rule"
+                $delete_rule
+                ;;
+        esac
     done < "$SCRIPT_DIR/$SCRIPT_NAME"
     
     echo ""
