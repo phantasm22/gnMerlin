@@ -386,8 +386,8 @@ install_update_guest_network() {
     get_available_interfaces
     select_interfaces
     if [ $? -eq 1 ]; then
-            return 1
-        fi
+        return
+    fi
     if [ -n "$SELECTED_INTERFACES" ]; then
         delete_ebtables_rules #clear out any old rules first
         write_script
