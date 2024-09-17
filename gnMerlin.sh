@@ -167,7 +167,15 @@ start_gnMerlin() {
 list_ebtables_chains() {
     echo ""
     echo -e "\033[1;31mListing all ebtables chains:\033[0m"
-    ebtables -L
+    
+    # Execute the ebtables command and capture its status
+    if ! ebtables -L > /dev/null 2>&1; then
+        echo -e "\033[1;31mError: Failed to list ebtables chains. Please check if ebtables is installed and try again.\033[0m"
+    else
+        # If successful, show the output of ebtables
+        ebtables -L
+    fi
+    
     echo ""
     echo -e "\033[1;32mPress enter to return to the menu\033[0m"
     read
@@ -176,13 +184,44 @@ list_ebtables_chains() {
 # Function to flush ebtables chains
 flush_ebtables_chains() {
     echo ""
-    echo -e "\033[1;31mFlushing all ebtables chains...\033[0m"
-    ebtables -F
-    echo ""
-    echo -e "\033[1;32mDone!\033[0m"
+    echo -e "\033[1;31mWarning: This will flush all ebtables chains.\033[0m"
+    echo -ne "\033[1;32mEnter \033[1;34flush\033[1;32 to confirm: \033[0m"
+    read confirmation
+
+    # Check if the user entered the correct confirmation
+    if [[ "$confirmation" == "flush" || "$confirmation" == "Flush" || "$confirmation" == "FLUSH" ]]; then
+        echo -e "\033[1;31mFlushing all ebtables chains...\033[0m"
+        
+        # Execute the ebtables flush command and check its status
+        if ! ebtables -F > /dev/null 2>&1; then
+            echo -e "\033[1;31mError: Failed to flush ebtables chains. Please check if ebtables is installed and try again.\033[0m"
+        else
+            echo -e "\033[1;32mDone! All ebtables chains have been flushed.\033[0m"
+        fi
+    else
+        # If the confirmation is incorrect, display a cancellation message
+        echo -e "\033[1;33mFlush operation cancelled. Incorrect confirmation.\033[0m"
+    fi
+
     echo ""
     echo -e "\033[1;32mPress enter to return to the menu\033[0m"
     read
+}
+
+#Function to call the wrapper for deleting ebtables and rules from script
+delete_ebtables_rules_wrapper(){
+    delete_ebtables_rules()
+    if [ $? -eq 0 ]; then
+            echo ""
+            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+            read
+            return
+        else
+            echo ""
+            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+            read
+            return
+    fi
 }
 
 # Function to delete ebtables rules from script
@@ -190,9 +229,6 @@ delete_ebtables_rules() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
         echo ""
         echo -e "\033[1;31mError: gnMerlin not installed. Nothing to do.\033[0m"
-        echo ""
-        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-        read
         return 1
     fi
     echo ""
@@ -208,12 +244,9 @@ delete_ebtables_rules() {
             $delete_rule
         fi
     done < "$SCRIPT_DIR/$SCRIPT_NAME"
-
     echo ""
     echo -e "\033[1;32mCompleted deleting ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
-    echo ""
-    echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-    read
+    return 0
 }
 
 # Function to handle existing script removal
@@ -235,6 +268,7 @@ uninstall_guest_network() {
     fi
 
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
+        delete_ebtables_rules
         rm "$SCRIPT_DIR/$SCRIPT_NAME"
         if [ $? -eq 0 ]; then
             echo "Removed $SCRIPT_NAME."
@@ -261,7 +295,7 @@ uninstall_guest_network() {
     fi
 
     echo ""
-    echo -e "\033[1;32mgnMerlin has been uninstalled successfully. Please reboot to take effect.\033[0m"
+    echo -e "\033[1;32mgnMerlin has been uninstalled successfully.\033[0m"
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
     read
@@ -344,13 +378,13 @@ install_update_guest_network() {
     get_available_interfaces
     select_interfaces
     if [ -n "$SELECTED_INTERFACES" ]; then
+        delete_ebtables_rules #clear out any old rules first
         write_script
         add_to_services_start
         start_gnMerlin
         echo -e "\033[1;32mInstallation/Update completed!\033[0m"
         check_configured_interfaces
     fi
-
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
     read
@@ -367,11 +401,11 @@ main_menu() {
         echo -e "   1. Install or Update Guest Network Isolation"
         echo -e "      $CONFIGURATION_STATUS"
         echo ""
-        echo -e "   2. List all rules in place"
+        echo -e "   2. List all ebtables chains in place"
         echo -e ""
-        echo -e "   3. Delete rules in place by gnMerlin"
+        echo -e "   3. Delete all ebtables chains used by gnMerlin"
         echo -e ""
-        echo -e "   4. Flush all rules in place\033[0m"
+        echo -e "   4. Flush all ebtables chains in place"
         echo -e ""
         echo -e "   u. Update gnMerlin script version"
         echo -e "      $UPDATE_STATUS"
@@ -386,7 +420,7 @@ main_menu() {
         case "$choice" in
             [1]) install_update_guest_network ;;
             [2]) list_ebtables_chains ;;
-            [3]) delete_ebtables_rules ;;
+            [3]) delete_ebtables_rules_wrapper ;;
             [4]) flush_ebtables_chains ;;
             [Uu]) update_script ;;
             [Zz]) uninstall_guest_network ;;
