@@ -73,7 +73,7 @@ select_interfaces() {
         return
     fi
 
-    echo -e "\033[1;32mSelected interfaces: $SELECTED_INTERFACES\033[0m"
+    echo -e "\033[1;32mSelected interfaces: \033[1;34m$SELECTED_INTERFACES\033[0m"
     echo -ne "\033[1;32mIs this correct? (y/n): \033[0m"
     read confirm
     if [ "$confirm" != "y" ]; then
