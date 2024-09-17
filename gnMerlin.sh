@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.1.9"
+SCRIPT_VERSION="0.2.0"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
@@ -208,20 +208,11 @@ flush_ebtables_chains() {
     read
 }
 
-#Function to call the wrapper for deleting ebtables and rules from script
+#Function wrapper for deleting ebtables and rules from script
 delete_ebtables_rules_wrapper(){
     delete_ebtables_rules()
-    if [ $? -eq 0 ]; then
-            echo ""
-            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-            read
-            return
-        else
-            echo ""
-            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-            read
-            return
-    fi
+    echo ""
+    echo -e "\033[1;32mPress enter to return to the menu\033[0m"
 }
 
 # Function to delete ebtables rules from script
@@ -229,7 +220,7 @@ delete_ebtables_rules() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
         echo ""
         echo -e "\033[1;31mError: gnMerlin not installed. Nothing to do.\033[0m"
-        return 1
+        return 0
     fi
     echo ""
     echo "Reading ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME..."
@@ -246,7 +237,7 @@ delete_ebtables_rules() {
     done < "$SCRIPT_DIR/$SCRIPT_NAME"
     echo ""
     echo -e "\033[1;32mCompleted deleting ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
-    return 0
+    return
 }
 
 # Function to handle existing script removal
@@ -267,6 +258,8 @@ uninstall_guest_network() {
         return
     fi
 
+   # Attempt to remove the gnMerlin script
+    script_removal_success=0
     if [ -f "$SCRIPT_DIR/$SCRIPT_NAME" ]; then
         delete_ebtables_rules
         rm "$SCRIPT_DIR/$SCRIPT_NAME"
@@ -274,26 +267,30 @@ uninstall_guest_network() {
             echo "Removed $SCRIPT_NAME."
         else
             echo -e "\033[1;31mError removing $SCRIPT_NAME.\033[0m"
-            echo ""
-            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-            read
-            return
+            script_removal_success=1
         fi
     fi
 
+    # Attempt to remove the gnMerlin entry from service-start script
+    service_entry_removal_success=0
     if grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
         sed -i "/$SCRIPT_NAME/d" "$SERVICE_START_SCRIPT"
         if [ $? -eq 0 ]; then
             echo "Removed gnMerlin entry from $SERVICE_START_SCRIPT."
         else
             echo -e "\033[1;31mError removing gnMerlin entry from $SERVICE_START_SCRIPT.\033[0m"
-            echo ""
-            echo -e "\033[1;32mPress enter to return to the menu\033[0m"
-            read
-            return
+            service_entry_removal_success=1
         fi
     fi
 
+    # Check if either removal failed and exit the function if so
+    if [ $script_removal_success -eq 1 ] || [ $service_entry_removal_success -eq 1 ]; then
+        echo ""
+        echo -e "\033[1;32mPress enter to return to the menu\033[0m"
+        read
+        return
+    fi
+    
     echo ""
     echo -e "\033[1;32mgnMerlin has been uninstalled successfully.\033[0m"
     echo ""
