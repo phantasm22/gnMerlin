@@ -70,7 +70,7 @@ select_interfaces() {
 
     if [ -z "$SELECTED_INTERFACES" ]; then
         echo -e "\033[1;33mNo interfaces selected. Returning to the main menu.\033[0m"
-        return 1
+        return 0
     fi
 
     echo -e "\033[1;32mSelected interfaces: \033[1;34m$SELECTED_INTERFACES\033[0m"
@@ -78,7 +78,7 @@ select_interfaces() {
     read confirm
     if [ "$confirm" != "y" ]; then
         echo -e "\033[1;33mReturning to the main menu.\033[0m"
-        return "1"
+        return 1
     fi
 }
 
