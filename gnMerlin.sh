@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.2.2"
+SCRIPT_VERSION="0.2.3"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
@@ -400,6 +400,8 @@ install_update_guest_network() {
         start_gnMerlin
         echo -e "\033[1;32mInstallation/Update completed!\033[0m"
         check_configured_interfaces
+    else # No interfaces selected, check to uninstall
+        uninstall_guest_network
     fi
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
