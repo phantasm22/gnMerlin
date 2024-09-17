@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.2.3"
+SCRIPT_VERSION="0.2.4"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
@@ -69,7 +69,7 @@ select_interfaces() {
     done
 
     if [ -z "$SELECTED_INTERFACES" ]; then
-        echo -e "\033[1;33mNo interfaces selected. Returning to the main menu.\033[0m"
+        echo -e "\033[1;33mNo interfaces selected.\033[0m"
         return 0
     fi
 
@@ -95,7 +95,6 @@ write_script() {
     
         # Check if the MACADDRESS is not empty
         if [ -z "$MACADDRESS" ]; then
-            echo ""
             echo -e "\033[1;31mError: MAC Address not found.\033[0m"
             echo ""
             echo -e "\033[1;32mPress enter to return to the menu\033[0m"
@@ -103,7 +102,6 @@ write_script() {
             return
         fi
     else
-        echo ""
         echo -e "\033[1;31mError: Default Gateway not found.\033[0m"
         echo ""
         echo -e "\033[1;32mPress enter to return to the menu\033[0m"
@@ -154,7 +152,6 @@ start_gnMerlin() {
             return
         fi
     else
-        echo ""
         echo -e "\033[1;31mError: gnMerlin script not found at $SCRIPT_DIR/$SCRIPT_NAME.\033[0m"
         echo ""
         echo -e "\033[1;32mPress enter to return to the menu\033[0m"
@@ -215,12 +212,11 @@ delete_ebtables_rules_wrapper() {
     echo -ne "\033[1;32mAre you sure you want to continue? (y/n): \033[0m"
     read confirm
     if [ "$confirm" != "y" ]; then
-        echo -e "\033[1;32mCancelled.\033[0m"
+        echo "Cancelled."
         return
     fi
     delete_ebtables_rules
     if [ $? != 0 ]; then
-        echo ""
         echo -e "\033[1;33mWarning: gnMerlin not installed. Nothing to do.\033[0m"
     fi
     echo ""
@@ -256,7 +252,6 @@ delete_ebtables_rules() {
 # Function to handle existing script removal
 uninstall_guest_network() {
     if [ ! -f "$SCRIPT_DIR/$SCRIPT_NAME" ] && ! grep -q "$SCRIPT_NAME" "$SERVICE_START_SCRIPT"; then
-        echo ""
         echo -e "\033[1;31mgnMerlin is not currently installed.\033[0m"
         echo ""
         echo -e "\033[1;32mPress enter to return to the menu\033[0m"
@@ -264,10 +259,11 @@ uninstall_guest_network() {
         return
     fi
     
-    echo -ne "\033[1;32mAre you sure you want to uninstall gnMerlin? (y/n): \033[0m"
+    echo ""
+    echo -ne "\033[1;32mDo you want to uninstall gnMerlin? (y/n): \033[0m"
     read confirm
     if [ "$confirm" != "y" ]; then
-        echo -e "\033[1;32mUninstall cancelled.\033[0m"
+        echo "Uninstall cancelled."
         return
     fi
 
@@ -304,7 +300,6 @@ uninstall_guest_network() {
         return
     fi
     
-    echo ""
     echo -e "\033[1;32mgnMerlin has been uninstalled successfully.\033[0m"
     echo ""
     echo -e "\033[1;32mPress enter to continue\033[0m"
@@ -349,7 +344,6 @@ install_update() {
     echo -e "\033[1;32mDownloading the latest version...\033[0m"
     curl -o "$PWD/$SCRIPT_NAME" "$REMOTE_VERSION_URL/$SCRIPT_NAME" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
-        echo ""
         echo -e "\033[1;32mUpdate successful. Restarting the script.\033[0m"
         chmod +x "$PWD/$SCRIPT_NAME"
         sleep 2
