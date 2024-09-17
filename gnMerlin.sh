@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Version of the script
-SCRIPT_VERSION="0.2.0"
+SCRIPT_VERSION="0.2.1"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/phantasm22/gnMerlin/main"
 
 # Variables
