@@ -232,7 +232,7 @@ delete_ebtables_rules() {
         return 0
     fi
     echo ""
-    echo "Reading ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME..."
+    echo -e "\033[1;32mReading ebtables rules from $SCRIPT_DIR/$SCRIPT_NAME...\033[0m"
     
     # Loop through each line in the script
     while IFS= read -r line; do
