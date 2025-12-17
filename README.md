@@ -24,7 +24,7 @@ gnMerlin is a shell script designed to isolate guest wireless networks on router
    curl -o ./gnMerlin.sh https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh && chmod +x ./gnMerlin.sh
    ```
    ```bash
-   `wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh chmod +x ./gnMerlin.sh`
+   wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh chmod +x ./gnMerlin.sh
    ```
 
 2. **Run Script**  
