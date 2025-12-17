@@ -21,19 +21,13 @@ gnMerlin is a shell script designed to isolate guest wireless networks on router
 1. **Download Script**  
    Download `gnMerlin.sh` file to a suitable location. Options:
    ```bash
-   curl -o ./gnMerlin.sh https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh
+   curl -o ./gnMerlin.sh https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh && chmod +x ./gnMerlin.sh
    ```
    ```bash
-   `wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh`
+   `wget https://raw.githubusercontent.com/phantasm22/gnMerlin/main/gnMerlin.sh chmod +x ./gnMerlin.sh`
    ```
 
-3. **Make Script Executable**  
-   Run the following command to make the script executable:
-   ```bash
-   chmod +x ./gnMerlin.sh
-   ```
-
-4. **Run Script**  
+2. **Run Script**  
    To run the script and configure guest network isolation:
    ```bash
    ./gnMerlin.sh
